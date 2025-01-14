@@ -175,3 +175,108 @@ public final static func IsOfCategoryType(filter: ItemFilterCategory, data: wref
 
   return wrappedMethod(filter, data);
 }
+
+@wrapMethod(CraftingDataView)
+public func FilterItem(item: ref<IScriptable>) -> Bool {
+  let itemRecord: ref<Item_Record>;
+  let itemData: ref<ItemCraftingData> = item as ItemCraftingData;
+  let recipeData: ref<RecipeData> = item as RecipeData;
+
+  if IsDefined(itemData) {
+    itemRecord = TweakDBInterface
+      .GetItemRecord(ItemID.GetTDBID(InventoryItemData.GetID(itemData.inventoryItem)));
+  } else {
+    if IsDefined(recipeData) {
+      itemRecord = recipeData.id;
+    }
+  }
+
+  if Equals(this.m_itemFilterType, ItemFilterCategory.Grenades) {
+    return itemRecord.TagsContains(n"Grenade") || itemRecord.TagsContains(n"Ammo");
+  } else {
+    if Equals(this.m_itemFilterType, ItemFilterCategory.Consumables) {
+      return itemRecord.TagsContains(n"Consumable");
+    }
+  }
+
+  return wrappedMethod(item);
+}
+
+@wrapMethod(UIInventoryItemsManager)
+public final static func GetBlacklistedTags() -> array<CName> {
+  let tags: array<CName> = wrappedMethod();
+
+  if ArrayContains(tags, n"Ammo") {
+    ArrayRemove(tags, n"Ammo");
+  }
+
+  return tags;
+}
+
+/*@wrapMethod(CraftingSystem)
+private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
+  let settings: ref<SurvivalSystemSettings> = new SurvivalSystemSettings();
+
+  this.m_playerCraftBook.HideRecipe(t"Ammo.HandgunAmmo", settings.hideAmmoRecipe);
+  this.m_playerCraftBook.HideRecipe(t"Ammo.ShotgunAmmo", settings.hideAmmoRecipe);
+  this.m_playerCraftBook.HideRecipe(t"Ammo.RifleAmmo", settings.hideAmmoRecipe);
+  this
+    .m_playerCraftBook
+    .HideRecipe(t"Ammo.SniperRifleAmmo", settings.hideAmmoRecipe);
+
+  wrappedMethod(saveVersion, gameVersion);
+}*/
+@replaceMethod(UIInventoryItem)
+public final func GetWeight() -> Float {
+  if Cast<Bool>(this.m_fetchedFlags & 512) {
+    return this.m_data.Weight;
+  }
+
+  this.m_data.Weight = RPGManager.GetItemWeight(this.m_itemData);
+  this.m_fetchedFlags |= 512;
+
+  return this.m_data.Weight;
+}
+
+/*@replaceMethod(ItemQuantityPickerController)
+protected final func UpdateWeight() -> Void {
+  let itemData: ref<gameItemData>;
+
+  if IsDefined(this.m_inventoryItem) {
+    itemData = this.m_inventoryItem.GetItemData();
+  } else {
+    itemData = InventoryItemData.GetGameItemData(this.m_gameData);
+  }
+
+  let weight: Float = RPGManager.GetItemWeight(itemData) * Cast<Float>(this.m_choosenQuantity);
+
+  inkTextRef.SetText(this.m_weightText, FloatToStringPrec(weight, 0));
+}
+
+@replaceMethod(MenuHubGameController)
+protected cb func OnDropQueueUpdatedEvent(evt: ref<DropQueueUpdatedEvent>) -> Bool {
+  let item: ref<gameItemData>;
+  let result: Float;
+  let dropQueue: array<ItemModParams> = evt.m_dropQueue;
+
+  let i: Int32 = 0;
+
+  while i < ArraySize(dropQueue) {
+    item = GameInstance
+      .GetTransactionSystem(this.m_player.GetGame())
+      .GetItemData(this.m_player, dropQueue[i].itemID);
+    result += RPGManager.GetItemWeight(item) * Cast<Float>(dropQueue[i].quantity);
+
+    i += 1;
+  }
+
+  this.HandlePlayerWeightUpdated(result);
+}*/
+@wrapMethod(BackpackMainGameController)
+protected cb func OnItemDisplayClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
+  if Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Edible) && evt.actionName.IsAction(n"equip_item") {
+    return false;
+  }
+
+  return wrappedMethod(evt);
+}
