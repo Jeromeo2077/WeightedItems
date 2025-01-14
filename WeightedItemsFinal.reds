@@ -146,3 +146,32 @@ public final static func FromInventoryTooltipData(tooltipData: ref<InventoryTool
   result.weight = ItemWeights.GetItemStackWeight(result.itemData);
   return result;
 }
+
+@wrapMethod(ItemFilterCategories)
+public final static func GetLabelKey(filterType: ItemFilterCategory) -> CName {
+  if Equals(filterType, ItemFilterCategory.Grenades) {
+    return n"UI-Filters-Ammunition";
+  }
+
+  return wrappedMethod(filterType);
+}
+
+@wrapMethod(ItemFilterCategories)
+public final static func GetIcon(filterType: ItemFilterCategory) -> String {
+  if Equals(filterType, ItemFilterCategory.Grenades) {
+    return "UIIcon.Filter_Ammunition";
+  }
+
+  return wrappedMethod(filterType);
+}
+
+@wrapMethod(ItemCategoryFliter)
+public final static func IsOfCategoryType(filter: ItemFilterCategory, data: wref<gameItemData>) -> Bool {
+  if IsDefined(data) {
+    if Equals(filter, ItemFilterCategory.Grenades) {
+      return data.HasTag(n"Grenade") || data.HasTag(n"Ammo");
+    }
+  }
+
+  return wrappedMethod(filter, data);
+}
