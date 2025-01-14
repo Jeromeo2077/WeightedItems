@@ -251,26 +251,6 @@ protected final func UpdateWeight() -> Void {
   let weight: Float = RPGManager.GetItemWeight(itemData) * Cast<Float>(this.m_choosenQuantity);
 
   inkTextRef.SetText(this.m_weightText, FloatToStringPrec(weight, 0));
-}
-
-@replaceMethod(MenuHubGameController)
-protected cb func OnDropQueueUpdatedEvent(evt: ref<DropQueueUpdatedEvent>) -> Bool {
-  let item: ref<gameItemData>;
-  let result: Float;
-  let dropQueue: array<ItemModParams> = evt.m_dropQueue;
-
-  let i: Int32 = 0;
-
-  while i < ArraySize(dropQueue) {
-    item = GameInstance
-      .GetTransactionSystem(this.m_player.GetGame())
-      .GetItemData(this.m_player, dropQueue[i].itemID);
-    result += RPGManager.GetItemWeight(item) * Cast<Float>(dropQueue[i].quantity);
-
-    i += 1;
-  }
-
-  this.HandlePlayerWeightUpdated(result);
 }*/
 @wrapMethod(BackpackMainGameController)
 protected cb func OnItemDisplayClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
