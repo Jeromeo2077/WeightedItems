@@ -4,9 +4,9 @@ public class ItemWeights {
 
   public static func CyberwearWeight() -> Float = 0.25;
 
-  public static func AmmoWeight() -> Float = 0.03;
+  //public static func AmmoWeight() -> Float = 0.03;
 
-  public static func EdibleWeight() -> Float = 0.3;
+  //public static func EdibleWeight() -> Float = 0.3;
 
   public static func JunkWeight() -> Float = 0.75;
 
@@ -55,13 +55,13 @@ public class ItemWeights {
         case gamedataItemType.Clo_OuterChest:
         case gamedataItemType.Clo_Outfit:
           return ItemWeights.ClothesWeight();
-        case gamedataItemType.Con_Ammo:
-          return ItemWeights.AmmoWeight();
-        case gamedataItemType.Con_Edible:
-        case gamedataItemType.Con_Inhaler:
-        case gamedataItemType.Con_Injector:
-        case gamedataItemType.Con_LongLasting:
-          return ItemWeights.EdibleWeight();
+        //case gamedataItemType.Con_Ammo:
+        //  return ItemWeights.AmmoWeight();
+        //case gamedataItemType.Con_Edible:
+        //case gamedataItemType.Con_Inhaler:
+        //case gamedataItemType.Con_Injector:
+        //case gamedataItemType.Con_LongLasting:
+        //  return ItemWeights.EdibleWeight();
         case /* case gamedataItemType.Cyb_Ability: */ /* case gamedataItemType.Cyb_Launcher: */ /* case gamedataItemType.Cyb_MantisBlades: */ /* case gamedataItemType.Cyb_NanoWires: */ /* case gamedataItemType.Cyb_StrongArms: */ /* return ItemWeights.CyberwearWeight(); */ gamedataItemType.Gen_CraftingMaterial:
           // Can't be dropped, only stashed or sold.
           return ItemWeights.MaterialsWeight();
@@ -226,6 +226,7 @@ private func OnRestored(saveVersion: Int32, gameVersion: Int32) -> Void {
 
   wrappedMethod(saveVersion, gameVersion);
 }*/
+
 @replaceMethod(UIInventoryItem)
 public final func GetWeight() -> Float {
   if Cast<Bool>(this.m_fetchedFlags & 512) {
@@ -252,6 +253,7 @@ protected final func UpdateWeight() -> Void {
 
   inkTextRef.SetText(this.m_weightText, FloatToStringPrec(weight, 0));
 }*/
+
 @wrapMethod(BackpackMainGameController)
 protected cb func OnItemDisplayClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
   if Equals(evt.uiInventoryItem.GetItemType(), gamedataItemType.Con_Edible) && evt.actionName.IsAction(n"equip_item") {
